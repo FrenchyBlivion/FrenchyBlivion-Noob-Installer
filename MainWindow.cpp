@@ -23,11 +23,12 @@ MainWindow::MainWindow(QWidget* parent)
 	, plugins{
 		"FrenchyBlivionVanilla.esp",
 		"FrenchyBlivionDLC.esp",
-		"FrenchyBlivionAltar.esp"
+		"FrenchyBlivionAltar.esp",
+		"FrenchyBlivionCredits.esp"
 	}
 {
     ui->setupUi(this);
-	
+
 	qApp->setOverrideCursor(cursor);
 
 	if (!QDir("OblivionRemastered").exists())
@@ -35,7 +36,7 @@ MainWindow::MainWindow(QWidget* parent)
 		QMessageBox::critical(this, tr("FrenchyBlivion Noob Installer"), tr("Le dossier du patch n'a pas été trouvé.\nMettez le dossier \"OblivionRemastered\" à côté de l'exécutable."), QMessageBox::Ok);
 		exit(-1);
 	}
-	
+
 	player.setSource(QUrl("qrc:/music/music.mp3"));
 	player.setAudioOutput(&audioOutput);
 	player.setLoops(QMediaPlayer::Infinite);
@@ -110,7 +111,7 @@ void MainWindow::patch(const QString& filePath)
 		}
 		QFile::copy(filePath, gameFile);
 	}
-	else if (filePath.endsWith(".pak", Qt::CaseInsensitive))
+	else if (filePath.endsWith(".pak", Qt::CaseInsensitive) || filePath.endsWith(".ucas", Qt::CaseInsensitive) ||filePath.endsWith(".utoc", Qt::CaseInsensitive))
 	{
 		const QString gameFile = gameFolder + OBLIVION_PAK_SUBFOLDER + QFileInfo(filePath).fileName();
 		QFile::copy(filePath, gameFile);
@@ -173,7 +174,7 @@ void MainWindow::unpatch(const QString& filePath)
 			}
 		}
 	}
-	else if (filePath.endsWith(".pak", Qt::CaseInsensitive))
+	else if (filePath.endsWith(".pak", Qt::CaseInsensitive) || filePath.endsWith(".ucas", Qt::CaseInsensitive) ||filePath.endsWith(".utoc", Qt::CaseInsensitive))
 	{
 		const QString gameFile = gameFolder + OBLIVION_PAK_SUBFOLDER + QFileInfo(filePath).fileName();
 		if (QFile(gameFile).exists())
