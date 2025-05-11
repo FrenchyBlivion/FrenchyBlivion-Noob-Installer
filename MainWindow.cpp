@@ -13,6 +13,7 @@
 
 #define OBLIVION_BSA_SUBFOLDER "/OblivionRemastered/Content/Dev/ObvData/Data/"
 #define OBLIVION_PAK_SUBFOLDER "/OblivionRemastered/Content/Paks/"
+#define OBLIVION_MOVIES_SUBFOLDER "/OblivionRemastered/Content/Movies/Modern/"
 
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent)
@@ -31,7 +32,7 @@ MainWindow::MainWindow(QWidget* parent)
 
 	qApp->setOverrideCursor(cursor);
 
-	if (!QDir("OblivionRemastered").exists())
+	if (!QDir("../OblivionRemastered").exists())
 	{
 		QMessageBox::critical(this, tr("FrenchyBlivion Noob Installer"), tr("Le dossier du patch n'a pas été trouvé.\nMettez le dossier \"OblivionRemastered\" à côté de l'exécutable."), QMessageBox::Ok);
 		exit(-1);
@@ -43,7 +44,7 @@ MainWindow::MainWindow(QWidget* parent)
 	audioOutput.setVolume(0.3f);
 	player.play();
 
-	patchFiles = discoverFiles("OblivionRemastered");
+	patchFiles = discoverFiles("../OblivionRemastered");
 
 	ui->gameFolderLineEdit->setText(settings.value("gameFolder").toString());
 	ui->progressBar->setVisible(false);
@@ -116,6 +117,15 @@ void MainWindow::patch(const QString& filePath)
 		const QString gameFile = gameFolder + OBLIVION_PAK_SUBFOLDER + QFileInfo(filePath).fileName();
 		QFile::copy(filePath, gameFile);
 	}
+	else if (filePath.endsWith(".bk2", Qt::CaseInsensitive))
+	{
+		const QString gameFileGame = gameFolder + OBLIVION_MOVIES_SUBFOLDER + QFileInfo(filePath).fileName();
+		if (QFile(gameFileGame).exists())
+		{
+			QFile::rename(gameFileGame, gameFileGame + ".old");
+		}
+		QFile::copy(filePath, gameFileGame);
+	}
 }
 
 void MainWindow::patchPluginFile(const QString& gameFolder)
@@ -180,6 +190,18 @@ void MainWindow::unpatch(const QString& filePath)
 		if (QFile(gameFile).exists())
 		{
 			QFile::remove(gameFile);
+		}
+	}
+	else if (filePath.endsWith(".bk2", Qt::CaseInsensitive))
+	{
+		const QString gameFile = gameFolder + OBLIVION_MOVIES_SUBFOLDER + QFileInfo(filePath).fileName();
+		if (QFile(gameFile).exists())
+		{
+			QFile::remove(gameFile);
+			if (QFile(gameFile + ".old").exists())
+			{
+				QFile::rename(gameFile + ".old", gameFile);
+			}
 		}
 	}
 }
