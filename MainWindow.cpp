@@ -253,7 +253,7 @@ void MainWindow::on_openFolderPushButton_clicked()
 
 void MainWindow::on_gameFolderLineEdit_textChanged(const QString& text)
 {
-	if (QDir(text).exists() && QFile(text + "/OblivionRemastered.exe").exists())
+	if (QDir(text).exists())
 	{
 		if (QFile(text + OBLIVION_BSA_SUBFOLDER + "FrenchyBlivionVanilla.bsa").exists())
 		{
